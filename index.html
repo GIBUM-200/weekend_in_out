@@ -16,25 +16,44 @@
     .field.full { grid-column: 1 / -1; }
     label { font-weight: 600; }
     input[type="text"], select {
-      padding: 10px 12px; border: 1px solid #ccd2e0; border-radius: 10px;
-      font-size: 14px; background: #fff; box-sizing: border-box; width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ccd2e0;
+      border-radius: 10px;
+      font-size: 14px;
+      background: #fff;
+      box-sizing: border-box;
+      width: 100%;
     }
     .checks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
     .checks label {
-      font-weight: 400; display: flex; align-items: center; gap: 6px;
-      background: #f7f9fc; padding: 8px 10px; border-radius: 10px;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #f7f9fc;
+      padding: 8px 10px;
+      border-radius: 10px;
     }
     .btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
     button {
-      border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
-      cursor: pointer; background: #1f5eff; color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      background: #1f5eff;
+      color: #fff;
     }
     button.secondary { background: #6b7280; }
     button.ghost { background: #eef2ff; color: #1f3fb0; }
     .hidden { display: none; }
     .preview {
-      background: #f8fafc; border: 1px solid #dbe4f0; border-radius: 12px;
-      padding: 14px; white-space: pre-line; line-height: 1.65;
+      background: #f8fafc;
+      border: 1px solid #dbe4f0;
+      border-radius: 12px;
+      padding: 14px;
+      white-space: pre-line;
+      line-height: 1.65;
     }
     .msg { margin-top: 10px; font-size: 14px; }
     .ok { color: #0a7a34; }
@@ -109,7 +128,14 @@
 
       <div class="field hidden" id="saturdayWrap">
         <label for="saturdayTime">토요일 귀가시간</label>
-        <input type="text" id="saturdayTime" placeholder="예: (토) 13:00">
+        <select id="saturdayTime">
+          <option value="">선택</option>
+          <option value="(토) 9:00 이전">(토) 9:00 이전</option>
+          <option value="(토) 12:50-2교시 후">(토) 12:50-2교시 후</option>
+          <option value="(토) 17:30-4교시 후">(토) 17:30-4교시 후</option>
+          <option value="(토) 21:00">(토) 21:00</option>
+          <option value="(토) 23:00">(토) 23:00</option>
+        </select>
       </div>
 
       <div class="field hidden" id="returnWrap">
@@ -194,7 +220,7 @@
 </div>
 
 <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfyuLeSXSiedVS3_hWDj_4V6rimPLmsBpp-LIPQttQbtuPrQ2SQL6y2Am9sxJ4Z-o0zw/exec';
+  const SCRIPT_URL = '여기에_앱스스크립트_웹앱_URL_붙여넣기';
   let STUDENT_OK = false;
 
   function getCommonChoiceLabel(value) {
@@ -242,11 +268,7 @@
     toggle('saturdayWrap', choice === '△');
     toggle('returnWrap', choice === '♣' || choice === '△');
     toggle('mealWrap', choice === 'O' || choice === '△');
-
-    // 토요일 외출: O, △ 가능
     toggle('satOutingSection', choice === 'O' || choice === '△');
-
-    // 일요일 외출: O만 가능
     toggle('sunOutingSection', choice === 'O');
 
     if (choice !== '♣') document.getElementById('fridayTime').value = '';
@@ -279,7 +301,7 @@
     }
 
     if (data.commonChoice === '△' && !data.saturdayTime) {
-      return '토요일 귀가자는 토요일 귀가시간을 입력해야 합니다.';
+      return '토요일 귀가자는 토요일 귀가시간을 선택해야 합니다.';
     }
 
     if ((data.commonChoice === '♣' || data.commonChoice === '△') && !data.returnTime) {
@@ -367,11 +389,9 @@
       saturdayTime: data.saturdayTime,
       returnTime: data.returnTime,
       meals: data.meals.join('|'),
-
       satOutingReason: data.satOutingReason,
       satOutingDepartTime: data.satOutingDepartTime,
       satOutingReturnTime: data.satOutingReturnTime,
-
       sunOutingReason: data.sunOutingReason,
       sunOutingDepartTime: data.sunOutingDepartTime,
       sunOutingReturnTime: data.sunOutingReturnTime
@@ -411,11 +431,9 @@
       saturdayTime: val('saturdayTime'),
       returnTime: val('returnTime'),
       meals,
-
       satOutingReason: val('satOutingReason'),
       satOutingDepartTime: val('satOutingDepartTime'),
       satOutingReturnTime: val('satOutingReturnTime'),
-
       sunOutingReason: val('sunOutingReason'),
       sunOutingDepartTime: val('sunOutingDepartTime'),
       sunOutingReturnTime: val('sunOutingReturnTime')
