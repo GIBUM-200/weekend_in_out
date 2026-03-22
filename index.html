@@ -5,123 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>주말 외출·외박 신청</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f6f7fb;
-      color: #222;
-    }
-    .wrap {
-      max-width: 920px;
-      margin: 24px auto;
-      padding: 16px;
-    }
-    .card {
-      background: #fff;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,.08);
-      margin-bottom: 16px;
-    }
-    h1 {
-      font-size: 24px;
-      margin: 0 0 12px;
-    }
-    h2 {
-      font-size: 18px;
-      margin: 0 0 12px;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .field.full {
-      grid-column: 1 / -1;
-    }
-    label {
-      font-weight: 600;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; background: #f6f7fb; color: #222; }
+    .wrap { max-width: 920px; margin: 24px auto; padding: 16px; }
+    .card { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,.08); margin-bottom: 16px; }
+    h1 { font-size: 24px; margin: 0 0 12px; }
+    h2 { font-size: 18px; margin: 0 0 12px; }
+    h3 { font-size: 16px; margin: 18px 0 10px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field.full { grid-column: 1 / -1; }
+    label { font-weight: 600; }
     input[type="text"], select {
-      padding: 10px 12px;
-      border: 1px solid #ccd2e0;
-      border-radius: 10px;
-      font-size: 14px;
-      background: #fff;
-      box-sizing: border-box;
-      width: 100%;
+      padding: 10px 12px; border: 1px solid #ccd2e0; border-radius: 10px;
+      font-size: 14px; background: #fff; box-sizing: border-box; width: 100%;
     }
-    .checks {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-    }
+    .checks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
     .checks label {
-      font-weight: 400;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: #f7f9fc;
-      padding: 8px 10px;
-      border-radius: 10px;
+      font-weight: 400; display: flex; align-items: center; gap: 6px;
+      background: #f7f9fc; padding: 8px 10px; border-radius: 10px;
     }
-    .btns {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 16px;
-    }
+    .btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
     button {
-      border: none;
-      border-radius: 10px;
-      padding: 10px 16px;
-      font-size: 14px;
-      cursor: pointer;
-      background: #1f5eff;
-      color: #fff;
+      border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px;
+      cursor: pointer; background: #1f5eff; color: #fff;
     }
-    button.secondary {
-      background: #6b7280;
-    }
-    button.ghost {
-      background: #eef2ff;
-      color: #1f3fb0;
-    }
-    .hidden {
-      display: none;
-    }
+    button.secondary { background: #6b7280; }
+    button.ghost { background: #eef2ff; color: #1f3fb0; }
+    .hidden { display: none; }
     .preview {
-      background: #f8fafc;
-      border: 1px solid #dbe4f0;
-      border-radius: 12px;
-      padding: 14px;
-      white-space: pre-line;
-      line-height: 1.65;
+      background: #f8fafc; border: 1px solid #dbe4f0; border-radius: 12px;
+      padding: 14px; white-space: pre-line; line-height: 1.65;
     }
-    .msg {
-      margin-top: 10px;
-      font-size: 14px;
-    }
-    .ok {
-      color: #0a7a34;
-    }
-    .err {
-      color: #c62828;
-    }
-    .note {
-      font-size: 13px;
-      color: #5b6475;
-      margin-top: 6px;
-    }
+    .msg { margin-top: 10px; font-size: 14px; }
+    .ok { color: #0a7a34; }
+    .err { color: #c62828; }
+    .note { font-size: 13px; color: #5b6475; margin-top: 6px; }
     @media (max-width: 700px) {
-      .grid, .checks {
-        grid-template-columns: 1fr;
-      }
+      .grid, .checks { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -141,19 +61,23 @@
           <option value="1-5">1-5</option>
         </select>
       </div>
+
       <div class="field">
         <label for="studentId">학번</label>
         <input type="text" id="studentId" placeholder="예: 1102">
       </div>
+
       <div class="field">
         <label for="studentName">이름</label>
         <input type="text" id="studentName" placeholder="예: 강시은">
       </div>
+
       <div class="field">
         <label>&nbsp;</label>
         <button type="button" class="ghost" onclick="checkStudent()">학생 정보 확인</button>
       </div>
     </div>
+
     <div id="studentMsg" class="msg"></div>
   </div>
 
@@ -164,11 +88,11 @@
       <div class="field">
         <label for="commonChoice">공통 선택</label>
         <select id="commonChoice" onchange="toggleFields()">
-          <option value="">공란(전체귀가)</option>
-          <option value="O">O</option>
-          <option value="♣">♣</option>
-          <option value="△">△</option>
-          <option value="통학">통학</option>
+          <option value="">전체귀가</option>
+          <option value="O">O (잔류)</option>
+          <option value="♣">♣ (금요일 귀가)</option>
+          <option value="△">△ (토요일 귀가)</option>
+          <option value="통학">통학 (통학자)</option>
         </select>
       </div>
 
@@ -190,7 +114,15 @@
 
       <div class="field hidden" id="returnWrap">
         <label for="returnTime">복귀시간</label>
-        <input type="text" id="returnTime" placeholder="예: (일) 21:00~21:30">
+        <select id="returnTime">
+          <option value="">선택</option>
+          <option value="(토) 17:30~19:00">(토) 17:30~19:00</option>
+          <option value="(토) 21:00~21:30">(토) 21:00~21:30</option>
+          <option value="(토) 23:00~23:30">(토) 23:00~23:30</option>
+          <option value="(일) 17:30~19:00">(일) 17:30~19:00</option>
+          <option value="(일) 21:00~21:30">(일) 21:00~21:30</option>
+          <option value="(일) 23:00~23:30">(일) 23:00~23:30</option>
+        </select>
       </div>
     </div>
 
@@ -207,26 +139,42 @@
       <div class="note">식사 신청은 잔류(O) 또는 토요일 귀가(△) 학생만 입력합니다.</div>
     </div>
 
-    <div id="outingSection" class="hidden">
-      <h2 style="margin-top:18px;">잔류자 외출 신청</h2>
+    <div id="satOutingSection" class="hidden">
+      <h3>토요일 외출</h3>
       <div class="grid">
         <div class="field">
-          <label for="outingDays">요일</label>
-          <input type="text" id="outingDays" placeholder="예: 토요일 / 토요일 일요일">
+          <label for="satOutingReason">토요일 외출 사유</label>
+          <input type="text" id="satOutingReason" placeholder="예: 학원">
         </div>
         <div class="field">
-          <label for="outingReason">외출 사유</label>
-          <input type="text" id="outingReason" placeholder="예: 학원">
+          <label for="satOutingDepartTime">토요일 출발 시간</label>
+          <input type="text" id="satOutingDepartTime" placeholder="예: 11:10">
         </div>
         <div class="field">
-          <label for="outingDepartTime">출발 시간</label>
-          <input type="text" id="outingDepartTime" placeholder="예: 11:10">
-        </div>
-        <div class="field">
-          <label for="outingReturnTime">복귀 시간</label>
-          <input type="text" id="outingReturnTime" placeholder="예: 17:30">
+          <label for="satOutingReturnTime">토요일 복귀 시간</label>
+          <input type="text" id="satOutingReturnTime" placeholder="예: 17:30">
         </div>
       </div>
+      <div class="note">토요일 외출은 잔류(O) 또는 토요일 귀가(△) 학생이 입력할 수 있습니다.</div>
+    </div>
+
+    <div id="sunOutingSection" class="hidden">
+      <h3>일요일 외출</h3>
+      <div class="grid">
+        <div class="field">
+          <label for="sunOutingReason">일요일 외출 사유</label>
+          <input type="text" id="sunOutingReason" placeholder="예: 병원">
+        </div>
+        <div class="field">
+          <label for="sunOutingDepartTime">일요일 출발 시간</label>
+          <input type="text" id="sunOutingDepartTime" placeholder="예: 13:00">
+        </div>
+        <div class="field">
+          <label for="sunOutingReturnTime">일요일 복귀 시간</label>
+          <input type="text" id="sunOutingReturnTime" placeholder="예: 16:30">
+        </div>
+      </div>
+      <div class="note">일요일 외출은 잔류(O) 학생만 입력할 수 있습니다.</div>
     </div>
 
     <div class="btns">
@@ -249,6 +197,14 @@
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfyuLeSXSiedVS3_hWDj_4V6rimPLmsBpp-LIPQttQbtuPrQ2SQL6y2Am9sxJ4Z-o0zw/exec';
   let STUDENT_OK = false;
 
+  function getCommonChoiceLabel(value) {
+    if (value === 'O') return 'O (잔류)';
+    if (value === '♣') return '♣ (금요일 귀가)';
+    if (value === '△') return '△ (토요일 귀가)';
+    if (value === '통학') return '통학 (통학자)';
+    return '전체귀가';
+  }
+
   function checkStudent() {
     clearMsg('studentMsg');
 
@@ -264,11 +220,7 @@
       .then(res => {
         if (res.found) {
           STUDENT_OK = true;
-          setMsg(
-            'studentMsg',
-            `${res.className} ${res.studentId} ${res.studentName} 학생이 확인되었습니다.`,
-            true
-          );
+          setMsg('studentMsg', `${res.className} ${res.studentId} ${res.studentName} 학생이 확인되었습니다.`, true);
           document.getElementById('formCard').classList.remove('hidden');
         } else {
           STUDENT_OK = false;
@@ -285,37 +237,39 @@
 
   function toggleFields() {
     const choice = val('commonChoice');
+
     toggle('fridayWrap', choice === '♣');
     toggle('saturdayWrap', choice === '△');
     toggle('returnWrap', choice === '♣' || choice === '△');
     toggle('mealWrap', choice === 'O' || choice === '△');
-    toggle('outingSection', choice === 'O');
 
-    if (choice !== '♣') {
-      document.getElementById('fridayTime').value = '';
-    }
-    if (choice !== '△') {
-      document.getElementById('saturdayTime').value = '';
-    }
-    if (choice !== '♣' && choice !== '△') {
-      document.getElementById('returnTime').value = '';
-    }
+    // 토요일 외출: O, △ 가능
+    toggle('satOutingSection', choice === 'O' || choice === '△');
+
+    // 일요일 외출: O만 가능
+    toggle('sunOutingSection', choice === 'O');
+
+    if (choice !== '♣') document.getElementById('fridayTime').value = '';
+    if (choice !== '△') document.getElementById('saturdayTime').value = '';
+    if (choice !== '♣' && choice !== '△') document.getElementById('returnTime').value = '';
+
+    if (choice !== 'O' && choice !== '△') clearMealChecks();
+
     if (choice !== 'O' && choice !== '△') {
-      clearMealChecks();
+      document.getElementById('satOutingReason').value = '';
+      document.getElementById('satOutingDepartTime').value = '';
+      document.getElementById('satOutingReturnTime').value = '';
     }
+
     if (choice !== 'O') {
-      document.getElementById('outingDays').value = '';
-      document.getElementById('outingReason').value = '';
-      document.getElementById('outingDepartTime').value = '';
-      document.getElementById('outingReturnTime').value = '';
+      document.getElementById('sunOutingReason').value = '';
+      document.getElementById('sunOutingDepartTime').value = '';
+      document.getElementById('sunOutingReturnTime').value = '';
     }
   }
 
   function validateBeforePreview(data) {
-    if (!STUDENT_OK) {
-      return '먼저 학생 정보를 확인하세요.';
-    }
-
+    if (!STUDENT_OK) return '먼저 학생 정보를 확인하세요.';
     if (!data.className) return '반을 선택하세요.';
     if (!data.studentId) return '학번을 입력하세요.';
     if (!data.studentName) return '이름을 입력하세요.';
@@ -332,15 +286,24 @@
       return '금요일/토요일 귀가자는 복귀시간을 반드시 입력해야 합니다.';
     }
 
-    const hasOuting = [
-      data.outingDays,
-      data.outingReason,
-      data.outingDepartTime,
-      data.outingReturnTime
+    const hasSatOuting = [
+      data.satOutingReason,
+      data.satOutingDepartTime,
+      data.satOutingReturnTime
     ].some(v => (v || '').trim());
 
-    if (hasOuting && data.commonChoice !== 'O') {
-      return '외출 입력은 잔류(O) 학생만 가능합니다.';
+    const hasSunOuting = [
+      data.sunOutingReason,
+      data.sunOutingDepartTime,
+      data.sunOutingReturnTime
+    ].some(v => (v || '').trim());
+
+    if (hasSatOuting && !['O', '△'].includes(data.commonChoice)) {
+      return '토요일 외출 입력은 잔류(O) 또는 토요일 귀가(△) 학생만 가능합니다.';
+    }
+
+    if (hasSunOuting && data.commonChoice !== 'O') {
+      return '일요일 외출 입력은 잔류(O) 학생만 가능합니다.';
     }
 
     return '';
@@ -359,22 +322,22 @@
     clearMsg('studentMsg');
 
     const meals = data.meals.length ? data.meals.join(', ') : '없음';
-    const outing = [
-      data.outingDays,
-      data.outingReason,
-      [data.outingDepartTime, data.outingReturnTime].filter(Boolean).join('~')
-    ].filter(Boolean).join(' / ') || '없음';
+    const satOuting = [data.satOutingReason, [data.satOutingDepartTime, data.satOutingReturnTime].filter(Boolean).join('~')]
+      .filter(Boolean).join(' / ') || '없음';
+    const sunOuting = [data.sunOutingReason, [data.sunOutingDepartTime, data.sunOutingReturnTime].filter(Boolean).join('~')]
+      .filter(Boolean).join(' / ') || '없음';
 
     const text = [
       `반: ${data.className}`,
       `학번: ${data.studentId}`,
       `이름: ${data.studentName}`,
-      `공통선택: ${data.commonChoice || '공란(전체귀가)'}`,
+      `공통선택: ${getCommonChoiceLabel(data.commonChoice)}`,
       `금요일 귀가시간: ${data.fridayTime || '없음'}`,
       `토요일 귀가시간: ${data.saturdayTime || '없음'}`,
       `복귀시간: ${data.returnTime || '없음'}`,
       `식사 신청: ${meals}`,
-      `외출 내용: ${outing}`
+      `토요일 외출: ${satOuting}`,
+      `일요일 외출: ${sunOuting}`
     ].join('\n');
 
     document.getElementById('previewBox').textContent = text;
@@ -404,19 +367,21 @@
       saturdayTime: data.saturdayTime,
       returnTime: data.returnTime,
       meals: data.meals.join('|'),
-      outingDays: data.outingDays,
-      outingReason: data.outingReason,
-      outingDepartTime: data.outingDepartTime,
-      outingReturnTime: data.outingReturnTime
+
+      satOutingReason: data.satOutingReason,
+      satOutingDepartTime: data.satOutingDepartTime,
+      satOutingReturnTime: data.satOutingReturnTime,
+
+      sunOutingReason: data.sunOutingReason,
+      sunOutingDepartTime: data.sunOutingDepartTime,
+      sunOutingReturnTime: data.sunOutingReturnTime
     });
 
     setMsg('submitMsg', '저장 중입니다...', true);
 
     fetch(SCRIPT_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-      },
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
       body: body.toString()
     })
       .then(r => r.json())
@@ -445,11 +410,15 @@
       fridayTime: val('fridayTime'),
       saturdayTime: val('saturdayTime'),
       returnTime: val('returnTime'),
-      meals: meals,
-      outingDays: val('outingDays'),
-      outingReason: val('outingReason'),
-      outingDepartTime: val('outingDepartTime'),
-      outingReturnTime: val('outingReturnTime')
+      meals,
+
+      satOutingReason: val('satOutingReason'),
+      satOutingDepartTime: val('satOutingDepartTime'),
+      satOutingReturnTime: val('satOutingReturnTime'),
+
+      sunOutingReason: val('sunOutingReason'),
+      sunOutingDepartTime: val('sunOutingDepartTime'),
+      sunOutingReturnTime: val('sunOutingReturnTime')
     };
   }
 
