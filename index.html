@@ -402,52 +402,59 @@
     document.getElementById('previewCard').classList.add('hidden');
   }
 
-  function submitForm() {
-    const data = collectForm();
-    const error = validateBeforePreview(data);
+function submitForm() {
+  const data = collectForm();
+  const error = validateBeforePreview(data);
 
-    if (error) {
-      setMsg('submitMsg', error, false);
-      return;
-    }
-
-    const body = new URLSearchParams({
-      className: data.className,
-      studentId: data.studentId,
-      studentName: data.studentName,
-      commonChoice: data.commonChoice,
-      fridayTime: data.fridayTime,
-      saturdayTime: data.saturdayTime,
-      returnTime: data.returnTime,
-      meals: data.meals.join('|'),
-      satOutingReason: data.satOutingReason,
-      satOutingDepartTime: data.satOutingDepartTime,
-      satOutingReturnTime: data.satOutingReturnTime,
-      sunOutingReason: data.sunOutingReason,
-      sunOutingDepartTime: data.sunOutingDepartTime,
-      sunOutingReturnTime: data.sunOutingReturnTime
-    });
-
-    setMsg('submitMsg', '저장 중입니다...', true);
-
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-      body: body.toString()
-    })
-      .then(r => r.json())
-      .then(res => {
-        if (res.ok) {
-          setMsg('submitMsg', res.message || '저장되었습니다.', true);
-          document.getElementById('previewCard').classList.add('hidden');
-        } else {
-          setMsg('submitMsg', res.error || '저장 중 오류가 발생했습니다.', false);
-        }
-      })
-      .catch(err => {
-        setMsg('submitMsg', err.message || String(err), false);
-      });
+  if (error) {
+    setMsg('submitMsg', error, false);
+    return;
   }
+
+  const body = new URLSearchParams({
+    className: data.className,
+    studentId: data.studentId,
+    studentName: data.studentName,
+    commonChoice: data.commonChoice,
+    fridayTime: data.fridayTime,
+    saturdayTime: data.saturdayTime,
+    returnTime: data.returnTime,
+    meals: data.meals.join('|'),
+    satOutingReason: data.satOutingReason,
+    satOutingDepartTime: data.satOutingDepartTime,
+    satOutingReturnTime: data.satOutingReturnTime,
+    sunOutingReason: data.sunOutingReason,
+    sunOutingDepartTime: data.sunOutingDepartTime,
+    sunOutingReturnTime: data.sunOutingReturnTime
+  });
+
+  setMsg('submitMsg', '저장 중입니다...', true);
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+    },
+    body: body.toString()
+  })
+    .then(async r => {
+      const text = await r.text();
+      console.log('POST 응답 원문:', text);
+      return JSON.parse(text);
+    })
+    .then(res => {
+      if (res.ok) {
+        setMsg('submitMsg', res.message || '저장되었습니다.', true);
+        document.getElementById('previewCard').classList.add('hidden');
+      } else {
+        setMsg('submitMsg', res.error || '저장 중 오류가 발생했습니다.', false);
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      setMsg('submitMsg', err.message || String(err), false);
+    });
+}
 
   function collectForm() {
     const meals = Array.from(document.querySelectorAll('#mealChecks input[type="checkbox"]:checked'))
