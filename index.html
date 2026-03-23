@@ -88,7 +88,7 @@
 
       <div class="field">
         <label for="studentName">이름</label>
-        <input type="text" id="studentName" placeholder="예: 강시은">
+        <input type="text" id="studentName" placeholder="예: 강리우">
       </div>
 
       <div class="field">
@@ -153,7 +153,7 @@
     </div>
 
     <div class="field full hidden" id="mealWrap">
-      <label>잔류자, 토요일 귀가자의 외부 식당 이용</label>
+      <label>식사 신청</label>
       <div class="checks" id="mealChecks">
         <label><input type="checkbox" value="(토) 조식"> (토) 조식</label>
         <label><input type="checkbox" value="(토) 중식"> (토) 중식</label>
@@ -162,7 +162,7 @@
         <label><input type="checkbox" value="(일) 중식"> (일) 중식</label>
         <label><input type="checkbox" value="(일) 석식"> (일) 석식</label>
       </div>
-      <div class="note">잔류(O)는 토·일 체크 가능, 토요일 귀가(△)는 토요일만 체크 가능합니다.</div>
+      <div class="note">잔류(O)는 토·일 외부 식당 이용 신청 가능, 토요일 귀가(△)는 토요일 외부 식당 이용만 신청 가능합니다.</div>
     </div>
 
     <div id="satOutingSection" class="hidden">
@@ -287,14 +287,17 @@
 
     toggle('fridayWrap', choice === '♣');
     toggle('saturdayWrap', choice === '△');
-    toggle('returnWrap', choice === '♣' || choice === '△');
+    toggle('returnWrap', choice === '' || choice === '♣' || choice === '△');
     toggle('mealWrap', choice === 'O' || choice === '△');
     toggle('satOutingSection', choice === 'O' || choice === '△');
     toggle('sunOutingSection', choice === 'O');
 
     if (choice !== '♣') document.getElementById('fridayTime').value = '';
     if (choice !== '△') document.getElementById('saturdayTime').value = '';
-    if (choice !== '♣' && choice !== '△') document.getElementById('returnTime').value = '';
+
+    if (choice !== '' && choice !== '♣' && choice !== '△') {
+      document.getElementById('returnTime').value = '';
+    }
 
     if (choice !== 'O' && choice !== '△') clearMealChecks();
 
@@ -327,8 +330,8 @@
       return '토요일 귀가자는 토요일 귀가시간을 선택해야 합니다.';
     }
 
-    if ((data.commonChoice === '♣' || data.commonChoice === '△') && !data.returnTime) {
-      return '금요일/토요일 귀가자는 복귀시간을 반드시 입력해야 합니다.';
+    if ((data.commonChoice === '' || data.commonChoice === '♣' || data.commonChoice === '△') && !data.returnTime) {
+      return '전체귀가/금요일 귀가/토요일 귀가 학생은 복귀시간을 반드시 입력해야 합니다.';
     }
 
     const hasSatOuting = [
@@ -402,59 +405,52 @@
     document.getElementById('previewCard').classList.add('hidden');
   }
 
-function submitForm() {
-  const data = collectForm();
-  const error = validateBeforePreview(data);
+  function submitForm() {
+    const data = collectForm();
+    const error = validateBeforePreview(data);
 
-  if (error) {
-    setMsg('submitMsg', error, false);
-    return;
-  }
+    if (error) {
+      setMsg('submitMsg', error, false);
+      return;
+    }
 
-  const body = new URLSearchParams({
-    className: data.className,
-    studentId: data.studentId,
-    studentName: data.studentName,
-    commonChoice: data.commonChoice,
-    fridayTime: data.fridayTime,
-    saturdayTime: data.saturdayTime,
-    returnTime: data.returnTime,
-    meals: data.meals.join('|'),
-    satOutingReason: data.satOutingReason,
-    satOutingDepartTime: data.satOutingDepartTime,
-    satOutingReturnTime: data.satOutingReturnTime,
-    sunOutingReason: data.sunOutingReason,
-    sunOutingDepartTime: data.sunOutingDepartTime,
-    sunOutingReturnTime: data.sunOutingReturnTime
-  });
-
-  setMsg('submitMsg', '저장 중입니다...', true);
-
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-    },
-    body: body.toString()
-  })
-    .then(async r => {
-      const text = await r.text();
-      console.log('POST 응답 원문:', text);
-      return JSON.parse(text);
-    })
-    .then(res => {
-      if (res.ok) {
-        setMsg('submitMsg', res.message || '저장되었습니다.', true);
-        document.getElementById('previewCard').classList.add('hidden');
-      } else {
-        setMsg('submitMsg', res.error || '저장 중 오류가 발생했습니다.', false);
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      setMsg('submitMsg', err.message || String(err), false);
+    const body = new URLSearchParams({
+      className: data.className,
+      studentId: data.studentId,
+      studentName: data.studentName,
+      commonChoice: data.commonChoice,
+      fridayTime: data.fridayTime,
+      saturdayTime: data.saturdayTime,
+      returnTime: data.returnTime,
+      meals: data.meals.join('|'),
+      satOutingReason: data.satOutingReason,
+      satOutingDepartTime: data.satOutingDepartTime,
+      satOutingReturnTime: data.satOutingReturnTime,
+      sunOutingReason: data.sunOutingReason,
+      sunOutingDepartTime: data.sunOutingDepartTime,
+      sunOutingReturnTime: data.sunOutingReturnTime
     });
-}
+
+    setMsg('submitMsg', '저장 중입니다...', true);
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+      body: body.toString()
+    })
+      .then(r => r.json())
+      .then(res => {
+        if (res.ok) {
+          setMsg('submitMsg', res.message || '저장되었습니다.', true);
+          document.getElementById('previewCard').classList.add('hidden');
+        } else {
+          setMsg('submitMsg', res.error || '저장 중 오류가 발생했습니다.', false);
+        }
+      })
+      .catch(err => {
+        setMsg('submitMsg', err.message || String(err), false);
+      });
+  }
 
   function collectForm() {
     const meals = Array.from(document.querySelectorAll('#mealChecks input[type="checkbox"]:checked'))
