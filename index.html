@@ -140,15 +140,7 @@
 
       <div class="field hidden" id="returnWrap">
         <label for="returnTime">복귀시간</label>
-        <select id="returnTime">
-          <option value="">선택</option>
-          <option value="(토) 17:30~19:00">(토) 17:30~19:00</option>
-          <option value="(토) 21:00~21:30">(토) 21:00~21:30</option>
-          <option value="(토) 23:00~23:30">(토) 23:00~23:30</option>
-          <option value="(일) 17:30~19:00">(일) 17:30~19:00</option>
-          <option value="(일) 21:00~21:30">(일) 21:00~21:30</option>
-          <option value="(일) 23:00~23:30">(일) 23:00~23:30</option>
-        </select>
+        <select id="returnTime"></select>
       </div>
     </div>
 
@@ -162,7 +154,7 @@
         <label><input type="checkbox" value="(일) 중식"> (일) 중식</label>
         <label><input type="checkbox" value="(일) 석식"> (일) 석식</label>
       </div>
-      <div class="note">잔류(O)는 토·일 외부 식당 이용 신청 가능, 토요일 귀가(△)는 토요일 외부 식당 이용만 신청 가능합니다.</div>
+      <div class="note">잔류(O)는 토·일 외부 식당 이용 가능, 토요일 귀가(△)는 토요일 외부 식당 이용만 신청 가능합니다.</div>
     </div>
 
     <div id="satOutingSection" class="hidden">
@@ -221,6 +213,22 @@
 
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfyuLeSXSiedVS3_hWDj_4V6rimPLmsBpp-LIPQttQbtuPrQ2SQL6y2Am9sxJ4Z-o0zw/exec';
+
+  const RETURN_OPTIONS_ALL = [
+    '(토) 17:30~19:00',
+    '(토) 21:00~21:30',
+    '(토) 23:00~23:30',
+    '(일) 17:30~19:00',
+    '(일) 21:00~21:30',
+    '(일) 23:00~23:30'
+  ];
+
+  const RETURN_OPTIONS_SUNDAY_ONLY = [
+    '(일) 17:30~19:00',
+    '(일) 21:00~21:30',
+    '(일) 23:00~23:30'
+  ];
+
   let STUDENT_OK = false;
 
   function getCommonChoiceLabel(value) {
@@ -261,6 +269,38 @@
       });
   }
 
+  function setReturnOptions(choice) {
+    const select = document.getElementById('returnTime');
+    const currentValue = select.value;
+
+    let options = [];
+    if (choice === '') {
+      options = RETURN_OPTIONS_SUNDAY_ONLY;
+    } else if (choice === '♣' || choice === '△') {
+      options = RETURN_OPTIONS_ALL;
+    }
+
+    select.innerHTML = '';
+
+    const first = document.createElement('option');
+    first.value = '';
+    first.textContent = '선택';
+    select.appendChild(first);
+
+    options.forEach(value => {
+      const opt = document.createElement('option');
+      opt.value = value;
+      opt.textContent = value;
+      select.appendChild(opt);
+    });
+
+    if (options.includes(currentValue)) {
+      select.value = currentValue;
+    } else {
+      select.value = '';
+    }
+  }
+
   function updateMealAvailability(choice) {
     const checkboxes = document.querySelectorAll('#mealChecks input[type="checkbox"]');
 
@@ -295,9 +335,7 @@
     if (choice !== '♣') document.getElementById('fridayTime').value = '';
     if (choice !== '△') document.getElementById('saturdayTime').value = '';
 
-    if (choice !== '' && choice !== '♣' && choice !== '△') {
-      document.getElementById('returnTime').value = '';
-    }
+    setReturnOptions(choice);
 
     if (choice !== 'O' && choice !== '△') clearMealChecks();
 
@@ -332,6 +370,16 @@
 
     if ((data.commonChoice === '' || data.commonChoice === '♣' || data.commonChoice === '△') && !data.returnTime) {
       return '전체귀가/금요일 귀가/토요일 귀가 학생은 복귀시간을 반드시 입력해야 합니다.';
+    }
+
+    const sundayReturnTimes = [
+      '(일) 17:30~19:00',
+      '(일) 21:00~21:30',
+      '(일) 23:00~23:30'
+    ];
+
+    if (data.commonChoice === '' && !sundayReturnTimes.includes(data.returnTime)) {
+      return '전체귀가 학생은 일요일 복귀시간만 선택할 수 있습니다.';
     }
 
     const hasSatOuting = [
@@ -502,6 +550,7 @@
 
   window.addEventListener('load', () => {
     updateMealAvailability(val('commonChoice'));
+    setReturnOptions(val('commonChoice'));
   });
 </script>
 </body>
