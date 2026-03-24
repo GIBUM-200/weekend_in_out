@@ -83,12 +83,12 @@
 
       <div class="field">
         <label for="studentId">학번</label>
-        <input type="text" id="studentId" placeholder="예: 1601">
+        <input type="text" id="studentId" placeholder="예: 1102">
       </div>
 
       <div class="field">
         <label for="studentName">이름</label>
-        <input type="text" id="studentName" placeholder="예: 홍길동">
+        <input type="text" id="studentName" placeholder="예: 강리우">
       </div>
 
       <div class="field">
@@ -107,6 +107,7 @@
       <div class="field">
         <label for="commonChoice">공통 선택</label>
         <select id="commonChoice" onchange="toggleFields()">
+          <option value="__SELECT__">선택</option>
           <option value="">전체귀가</option>
           <option value="O">O (잔류)</option>
           <option value="♣">♣ (금요일 귀가)</option>
@@ -145,7 +146,7 @@
     </div>
 
     <div class="field full hidden" id="mealWrap">
-      <label>외부 식당 이용 신청</label>
+      <label>잔류 시 외부 식당이용 신청</label>
       <div class="checks" id="mealChecks">
         <label><input type="checkbox" value="(토) 조식"> (토) 조식</label>
         <label><input type="checkbox" value="(토) 중식"> (토) 중식</label>
@@ -154,7 +155,7 @@
         <label><input type="checkbox" value="(일) 중식"> (일) 중식</label>
         <label><input type="checkbox" value="(일) 석식"> (일) 석식</label>
       </div>
-      <div class="note">잔류(O)는 토·일 외부 식당 이용 신청 가능, 토요일 귀가(△)는 토요일 외부 식당 이용만 신청 가능합니다.</div>
+      <div class="note">잔류(O)는 토·일 외부 식당이용 신청 가능, 토요일 귀가(△)는 토요일 외부 식당이용만 신청 가능합니다.</div>
     </div>
 
     <div id="satOutingSection" class="hidden">
@@ -236,7 +237,8 @@
     if (value === '♣') return '♣ (금요일 귀가)';
     if (value === '△') return '△ (토요일 귀가)';
     if (value === '통학') return '통학 (통학자)';
-    return '전체귀가';
+    if (value === '') return '전체귀가';
+    return '선택 안 함';
   }
 
   function checkStudent() {
@@ -332,12 +334,19 @@
     toggle('satOutingSection', choice === 'O' || choice === '△');
     toggle('sunOutingSection', choice === 'O');
 
-    if (choice !== '♣') document.getElementById('fridayTime').value = '';
-    if (choice !== '△') document.getElementById('saturdayTime').value = '';
+    if (choice !== '♣') {
+      document.getElementById('fridayTime').value = '';
+    }
+
+    if (choice !== '△') {
+      document.getElementById('saturdayTime').value = '';
+    }
 
     setReturnOptions(choice);
 
-    if (choice !== 'O' && choice !== '△') clearMealChecks();
+    if (choice !== 'O' && choice !== '△') {
+      clearMealChecks();
+    }
 
     updateMealAvailability(choice);
 
@@ -359,6 +368,7 @@
     if (!data.className) return '반을 선택하세요.';
     if (!data.studentId) return '학번을 입력하세요.';
     if (!data.studentName) return '이름을 입력하세요.';
+    if (data.commonChoice === '__SELECT__') return '공통 선택을 선택하세요.';
 
     if (data.commonChoice === '♣' && !data.fridayTime) {
       return '금요일 귀가자는 금요일 귀가시간을 선택해야 합니다.';
@@ -406,7 +416,7 @@
     if (data.commonChoice === '△') {
       const hasSundayMeal = data.meals.some(meal => sundayMeals.includes(meal));
       if (hasSundayMeal) {
-        return '토요일 귀가자는 일요일 외부 식당 이용을 신청할 수 없습니다.';
+        return '토요일 귀가자는 일요일 외부식당 이용을 신청할 수 없습니다.';
       }
     }
 
@@ -439,7 +449,7 @@
       `금요일 귀가시간: ${data.fridayTime || '없음'}`,
       `토요일 귀가시간: ${data.saturdayTime || '없음'}`,
       `복귀시간: ${data.returnTime || '없음'}`,
-      `식사 신청: ${meals}`,
+      `잔류 외부 식당이용 신청: ${meals}`,
       `토요일 외출: ${satOuting}`,
       `일요일 외출: ${sunOuting}`
     ].join('\n');
