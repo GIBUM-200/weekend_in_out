@@ -83,12 +83,12 @@
 
       <div class="field">
         <label for="studentId">학번</label>
-        <input type="text" id="studentId" placeholder="예: 1601">
+        <input type="text" id="studentId" placeholder="예: 1102">
       </div>
 
       <div class="field">
         <label for="studentName">이름</label>
-        <input type="text" id="studentName" placeholder="예: 홍길동">
+        <input type="text" id="studentName" placeholder="예: 강리우">
       </div>
 
       <div class="field">
@@ -146,7 +146,7 @@
     </div>
 
     <div class="field full hidden" id="mealWrap">
-      <label>식사 신청</label>
+      <label>잔류 시 외부식당 사용 신청</label>
       <div class="checks" id="mealChecks">
         <label><input type="checkbox" value="(토) 조식"> (토) 조식</label>
         <label><input type="checkbox" value="(토) 중식"> (토) 중식</label>
@@ -155,7 +155,7 @@
         <label><input type="checkbox" value="(일) 중식"> (일) 중식</label>
         <label><input type="checkbox" value="(일) 석식"> (일) 석식</label>
       </div>
-      <div class="note">잔류(O)는 토·일 외부 식당 이용 신청 가능, 토요일 귀가(△)는 토요일 외부 식당 이용만 신청 가능합니다.</div>
+      <div class="note">잔류(O)는 토·일 외부 식당이용 신청 가능, 토요일 귀가(△)는 토요일만 외부식당 신청 가능합니다.</div>
     </div>
 
     <div id="satOutingSection" class="hidden">
@@ -213,9 +213,9 @@
 </div>
 
 <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyfyuLeSXSiedVS3_hWDj_4V6rimPLmsBpp-LIPQttQbtuPrQ2SQL6y2Am9sxJ4Z-o0zw/exec';
+  const SCRIPT_URL = '여기에_앱스스크립트_웹앱_URL_붙여넣기';
 
-  const RETURN_OPTIONS_ALL = [
+  const RETURN_OPTIONS_FRIDAY = [
     '(토) 17:30~19:00',
     '(토) 21:00~21:30',
     '(토) 23:00~23:30',
@@ -225,7 +225,7 @@
     '월요일 아침'
   ];
 
-  const RETURN_OPTIONS_SUNDAY_ONLY = [
+  const RETURN_OPTIONS_SATURDAY_OR_ALLHOME = [
     '(일) 17:30~19:00',
     '(일) 21:00~21:30',
     '(일) 23:00~23:30',
@@ -279,9 +279,11 @@
 
     let options = [];
     if (choice === '') {
-      options = RETURN_OPTIONS_SUNDAY_ONLY;
-    } else if (choice === '♣' || choice === '△') {
-      options = RETURN_OPTIONS_ALL;
+      options = RETURN_OPTIONS_SATURDAY_OR_ALLHOME;
+    } else if (choice === '♣') {
+      options = RETURN_OPTIONS_FRIDAY;
+    } else if (choice === '△') {
+      options = RETURN_OPTIONS_SATURDAY_OR_ALLHOME;
     }
 
     select.innerHTML = '';
@@ -384,15 +386,16 @@
       return '전체귀가/금요일 귀가/토요일 귀가 학생은 복귀시간을 반드시 입력해야 합니다.';
     }
 
-    const sundayReturnTimes = [
-      '(일) 17:30~19:00',
-      '(일) 21:00~21:30',
-      '(일) 23:00~23:30',
-      '월요일 아침'
-    ];
-
-    if (data.commonChoice === '' && !sundayReturnTimes.includes(data.returnTime)) {
+    if (data.commonChoice === '' && !RETURN_OPTIONS_SATURDAY_OR_ALLHOME.includes(data.returnTime)) {
       return '전체귀가 학생은 일요일 복귀시간 또는 월요일 아침만 선택할 수 있습니다.';
+    }
+
+    if (data.commonChoice === '△' && !RETURN_OPTIONS_SATURDAY_OR_ALLHOME.includes(data.returnTime)) {
+      return '토요일 귀가 학생은 일요일 복귀시간 또는 월요일 아침만 선택할 수 있습니다.';
+    }
+
+    if (data.commonChoice === '♣' && !RETURN_OPTIONS_FRIDAY.includes(data.returnTime)) {
+      return '금요일 귀가 학생은 토요일/일요일 복귀시간 또는 월요일 아침만 선택할 수 있습니다.';
     }
 
     const hasSatOuting = [
@@ -419,7 +422,7 @@
     if (data.commonChoice === '△') {
       const hasSundayMeal = data.meals.some(meal => sundayMeals.includes(meal));
       if (hasSundayMeal) {
-        return '토요일 귀가자는 일요일 외부 식당 이용을 신청할 수 없습니다.';
+        return '토요일 귀가자는 일요일 외부 식당이용을 신청할 수 없습니다.';
       }
     }
 
@@ -452,7 +455,7 @@
       `금요일 귀가시간: ${data.fridayTime || '없음'}`,
       `토요일 귀가시간: ${data.saturdayTime || '없음'}`,
       `복귀시간: ${data.returnTime || '없음'}`,
-      `외부 식당 이용 신청: ${meals}`,
+      `주말 외부식당 이용 신청: ${meals}`,
       `토요일 외출: ${satOuting}`,
       `일요일 외출: ${sunOuting}`
     ].join('\n');
