@@ -83,12 +83,12 @@
 
       <div class="field">
         <label for="studentId">학번</label>
-        <input type="text" id="studentId" placeholder="예: 1601">
+        <input type="text" id="studentId" placeholder="예: 1102">
       </div>
 
       <div class="field">
         <label for="studentName">이름</label>
-        <input type="text" id="studentName" placeholder="예: 김세국">
+        <input type="text" id="studentName" placeholder="예: 강리우">
       </div>
 
       <div class="field">
@@ -141,12 +141,12 @@
 
       <div class="field hidden" id="returnWrap">
         <label for="returnTime">복귀시간</label>
-        <select id="returnTime"></select>
+        <select id="returnTime" onchange="handleReturnTimeChange()"></select>
       </div>
     </div>
 
     <div class="field full hidden" id="mealWrap">
-      <label>주말 외부 식당 이용 신청</label>
+      <label>외부인 식당 이용 신청</label>
       <div class="checks" id="mealChecks">
         <label><input type="checkbox" value="(토) 조식"> (토) 조식</label>
         <label><input type="checkbox" value="(토) 중식"> (토) 중식</label>
@@ -155,7 +155,7 @@
         <label><input type="checkbox" value="(일) 중식"> (일) 중식</label>
         <label><input type="checkbox" value="(일) 석식"> (일) 석식</label>
       </div>
-      <div class="note">잔류(O)는 토·일 외부 식당 이용 신청 가능, 토요일 귀가(△)는 토요일만 신청 가능합니다.</div>
+      <div class="note">잔류(O)는 토·일 외부인 식당 이용 신청 가능, 토요일 귀가(△)는 토요일 식당 이용만 신청 가능합니다.</div>
     </div>
 
     <div id="satOutingSection" class="hidden">
@@ -384,6 +384,10 @@
     }
   }
 
+  function handleReturnTimeChange() {
+    updateOutingAvailability(val('commonChoice'), val('returnTime'));
+  }
+
   function toggleFields() {
     const choice = val('commonChoice');
 
@@ -474,7 +478,7 @@
     if (data.commonChoice === '△') {
       const hasSundayMeal = data.meals.some(meal => sundayMeals.includes(meal));
       if (hasSundayMeal) {
-        return '토요일 귀가자는 일요일 외부 식당 이용을 신청할 수 없습니다.';
+        return '토요일 귀가자는 일요일 외부인 식당 이용을 신청할 수 없습니다.';
       }
     }
 
@@ -507,7 +511,7 @@
       `금요일 귀가시간: ${data.fridayTime || '없음'}`,
       `토요일 귀가시간: ${data.saturdayTime || '없음'}`,
       `복귀시간: ${data.returnTime || '없음'}`,
-      `주말 외부 식당 이용 신청: ${meals}`,
+      `외부인 식당 이용 신청: ${meals}`,
       `토요일 외출: ${satOuting}`,
       `일요일 외출: ${sunOuting}`
     ].join('\n');
@@ -620,9 +624,6 @@
     updateMealAvailability(val('commonChoice'));
     setReturnOptions(val('commonChoice'));
     updateOutingAvailability(val('commonChoice'), val('returnTime'));
-    document.getElementById('returnTime').addEventListener('change', () => {
-      updateOutingAvailability(val('commonChoice'), val('returnTime'));
-    });
   });
 </script>
 </body>
