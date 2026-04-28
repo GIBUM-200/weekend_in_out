@@ -142,6 +142,7 @@
       <div class="field hidden" id="returnWrap">
         <label for="returnTime">복귀시간</label>
         <select id="returnTime" onchange="handleReturnTimeChange()"></select>
+        <div id="specialReturnNote" class="note hidden">이번 주 한정: 복귀시간은 화요일 15:00~19:00, 화요일 21:00~21:30, 화요일 23:00~23:30, 수요일 오전 중 하나만 선택할 수 있습니다.</div>
       </div>
     </div>
 
@@ -213,7 +214,7 @@
 </div>
 
 <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw8Mp9ahQibpS_WhxJKww0sZ5llSWcrjYZygLWBzevGOarSxl_ZoV4SXik7fwPLqP02aw/exec';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyoLe86Fqx8PwHaPLLZCQi8ot5M9XBwnvcf2nhuBT_m1XYzxGG93mZmeJHHg4EijGfZpg/exec';
 
   const RETURN_OPTIONS_FRIDAY = [
     '(토) 17:30~19:00',
@@ -232,7 +233,50 @@
     '월요일 아침'
   ];
 
+  // 이번 주 한정 복귀시간 예외 설정
+  // 이 기간이 지나면 자동으로 기존 일/월 복귀 옵션으로 돌아갑니다.
+  const SPECIAL_RETURN_ENABLED = true;
+  const SPECIAL_RETURN_ACTIVE_FROM = '2026-04-28';
+  const SPECIAL_RETURN_ACTIVE_UNTIL = '2026-05-06';
+  const SPECIAL_RETURN_OPTIONS = [
+    '(화) 15:00~19:00',
+    '(화) 21:00~21:30',
+    '(화) 23:00~23:30',
+    '수요일 오전'
+  ];
+
   let STUDENT_OK = false;
+
+  function getTodayKstYmd() {
+    const parts = new Intl.DateTimeFormat('ko-KR', {
+      timeZone: 'Asia/Seoul',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).formatToParts(new Date());
+
+    const y = parts.find(p => p.type === 'year').value;
+    const m = parts.find(p => p.type === 'month').value;
+    const d = parts.find(p => p.type === 'day').value;
+    return `${y}-${m}-${d}`;
+  }
+
+  function isSpecialReturnWeekClient() {
+    if (!SPECIAL_RETURN_ENABLED) return false;
+    const today = getTodayKstYmd();
+    return today >= SPECIAL_RETURN_ACTIVE_FROM && today <= SPECIAL_RETURN_ACTIVE_UNTIL;
+  }
+
+  function getAllowedReturnOptions(choice) {
+    if (isSpecialReturnWeekClient() && (choice === '' || choice === '♣' || choice === '△')) {
+      return SPECIAL_RETURN_OPTIONS;
+    }
+
+    if (choice === '') return RETURN_OPTIONS_SATURDAY_OR_ALLHOME;
+    if (choice === '♣') return RETURN_OPTIONS_FRIDAY;
+    if (choice === '△') return RETURN_OPTIONS_SATURDAY_OR_ALLHOME;
+    return [];
+  }
 
   function getCommonChoiceLabel(value) {
     if (value === 'O') return 'O (잔류)';
@@ -289,14 +333,8 @@
     const select = document.getElementById('returnTime');
     const currentValue = select.value;
 
-    let options = [];
-    if (choice === '') {
-      options = RETURN_OPTIONS_SATURDAY_OR_ALLHOME;
-    } else if (choice === '♣') {
-      options = RETURN_OPTIONS_FRIDAY;
-    } else if (choice === '△') {
-      options = RETURN_OPTIONS_SATURDAY_OR_ALLHOME;
-    }
+    const options = getAllowedReturnOptions(choice);
+    const specialActive = isSpecialReturnWeekClient() && (choice === '' || choice === '♣' || choice === '△');
 
     select.innerHTML = '';
 
@@ -317,6 +355,9 @@
     } else {
       select.value = '';
     }
+
+    const note = document.getElementById('specialReturnNote');
+    if (note) note.classList.toggle('hidden', !specialActive);
   }
 
   function updateMealAvailability(choice) {
@@ -433,16 +474,19 @@
       return '전체귀가/금요일 귀가/토요일 귀가 학생은 복귀시간을 반드시 입력해야 합니다.';
     }
 
-    if (data.commonChoice === '' && !RETURN_OPTIONS_SATURDAY_OR_ALLHOME.includes(data.returnTime)) {
-      return '전체귀가 학생은 일요일 복귀시간 또는 월요일 아침만 선택할 수 있습니다.';
-    }
+    const allowedReturnOptions = getAllowedReturnOptions(data.commonChoice);
 
-    if (data.commonChoice === '△' && !RETURN_OPTIONS_SATURDAY_OR_ALLHOME.includes(data.returnTime)) {
-      return '토요일 귀가 학생은 일요일 복귀시간 또는 월요일 아침만 선택할 수 있습니다.';
-    }
+    if ((data.commonChoice === '' || data.commonChoice === '♣' || data.commonChoice === '△') &&
+        !allowedReturnOptions.includes(data.returnTime)) {
+      if (isSpecialReturnWeekClient()) {
+        return '이번 주 복귀시간은 화요일 15:00~19:00, 화요일 21:00~21:30, 화요일 23:00~23:30, 수요일 오전 중 하나만 선택할 수 있습니다.';
+      }
 
-    if (data.commonChoice === '♣' && !RETURN_OPTIONS_FRIDAY.includes(data.returnTime)) {
-      return '금요일 귀가 학생은 토요일/일요일 복귀시간 또는 월요일 아침만 선택할 수 있습니다.';
+      if (data.commonChoice === '♣') {
+        return '금요일 귀가 학생은 토요일/일요일 복귀시간 또는 월요일 아침만 선택할 수 있습니다.';
+      }
+
+      return '전체귀가/토요일 귀가 학생은 일요일 복귀시간 또는 월요일 아침만 선택할 수 있습니다.';
     }
 
     const hasSatOuting = [
