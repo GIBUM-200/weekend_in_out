@@ -1,122 +1,213 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>주말 외출·외박 신청</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #f6f7fb; color: #222; }
-    .wrap { max-width: 920px; margin: 24px auto; padding: 16px; }
-    .card { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,.08); margin-bottom: 16px; }
-    h1 { font-size: 24px; margin: 0 0 12px; }
-    h2 { font-size: 18px; margin: 0 0 12px; }
-    h3 { font-size: 16px; margin: 18px 0 10px; }
-    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-    .field { display: flex; flex-direction: column; gap: 6px; }
-    .field.full { grid-column: 1 / -1; }
-    label { font-weight: 600; }
-    input[type="text"], select {
-      padding: 10px 12px;
-      border: 1px solid #ccd2e0;
-      border-radius: 10px;
-      font-size: 14px;
-      background: #fff;
-      box-sizing: border-box;
-      width: 100%;
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f8f9fa;
+      color: #202124;
     }
-    .checks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid #dadce0;
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 2px 10px rgba(60, 64, 67, 0.08);
+    }
+
+    h1 {
+      font-size: 24px;
+      margin: 0 0 6px;
+    }
+
+    .desc {
+      color: #5f6368;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .notice {
+      background: #fef7e0;
+      border: 1px solid #fdd663;
+      border-radius: 10px;
+      padding: 12px;
+      margin: 12px 0 18px;
+      line-height: 1.5;
+      display: none;
+    }
+
+    .field {
+      margin: 14px 0;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 7px;
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #dadce0;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 16px;
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 72px;
+      resize: vertical;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .checks {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
     .checks label {
-      font-weight: 400;
+      font-weight: 500;
       display: flex;
       align-items: center;
-      gap: 6px;
-      background: #f7f9fc;
-      padding: 8px 10px;
-      border-radius: 10px;
+      gap: 7px;
+      margin: 0;
+      padding: 8px;
+      border: 1px solid #eee;
+      border-radius: 8px;
     }
-    .btns { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+    .hidden {
+      display: none;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
     button {
-      border: none;
+      border: 0;
       border-radius: 10px;
-      padding: 10px 16px;
-      font-size: 14px;
+      padding: 12px 16px;
+      font-size: 16px;
+      font-weight: 700;
       cursor: pointer;
-      background: #1f5eff;
+    }
+
+    .primary {
+      background: #1a73e8;
       color: #fff;
     }
-    button.secondary { background: #6b7280; }
-    button.ghost { background: #eef2ff; color: #1f3fb0; }
-    .hidden { display: none; }
-    .preview {
-      background: #f8fafc;
-      border: 1px solid #dbe4f0;
-      border-radius: 12px;
-      padding: 14px;
-      white-space: pre-line;
-      line-height: 1.65;
+
+    .secondary {
+      background: #e8eaed;
+      color: #202124;
     }
-    .msg { margin-top: 10px; font-size: 14px; }
-    .ok { color: #0a7a34; }
-    .err { color: #c62828; }
-    .note { font-size: 13px; color: #5b6475; margin-top: 6px; }
-    @media (max-width: 700px) {
-      .grid, .checks { grid-template-columns: 1fr; }
+
+    .msg {
+      margin-top: 14px;
+      white-space: pre-wrap;
+      line-height: 1.55;
+    }
+
+    .ok {
+      color: #188038;
+    }
+
+    .err {
+      color: #d93025;
+    }
+
+    .small {
+      font-size: 13px;
+      color: #5f6368;
+      line-height: 1.45;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 640px) {
+      .grid,
+      .checks {
+        grid-template-columns: 1fr;
+      }
+
+      body {
+        padding: 12px;
+      }
     }
   </style>
 </head>
-<body>
-<div class="wrap">
-  <div class="card">
-    <h1>주말 외출·외박 신청</h1>
-    <div class="grid">
-      <div class="field">
-        <label for="className">반</label>
-        <select id="className">
-          <option value="">선택</option>
-          <option value="1-1">1-1</option>
-          <option value="1-2">1-2</option>
-          <option value="1-3">1-3</option>
-          <option value="1-4">1-4</option>
-          <option value="1-5">1-5</option>
-        </select>
-      </div>
 
-      <div class="field">
-        <label for="studentId">학번</label>
-        <input type="text" id="studentId" placeholder="예: 1601">
+<body>
+  <div class="wrap">
+    <h1>주말 외출·외박 신청</h1>
+
+    <div class="desc">
+      반, 학번, 이름을 정확히 입력한 뒤 주말 잔류·귀가·외출·식사 신청 내용을 제출하세요.
+    </div>
+
+    <div id="specialNotice" class="notice"></div>
+
+    <form id="form">
+      <div class="grid">
+        <div class="field">
+          <label for="className">반</label>
+          <select id="className" required>
+            <option value="">선택</option>
+            <option value="1-1">1-1</option>
+            <option value="1-2">1-2</option>
+            <option value="1-3">1-3</option>
+            <option value="1-4">1-4</option>
+            <option value="1-5">1-5</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="studentId">학번</label>
+          <input id="studentId" type="text" inputmode="numeric" placeholder="예: 1203" required />
+        </div>
       </div>
 
       <div class="field">
         <label for="studentName">이름</label>
-        <input type="text" id="studentName" placeholder="예: 김세국">
+        <input id="studentName" type="text" placeholder="이름" required />
       </div>
 
-      <div class="field">
-        <label>&nbsp;</label>
-        <button type="button" class="ghost" onclick="checkStudent()">학생 정보 확인</button>
-      </div>
-    </div>
-
-    <div id="studentMsg" class="msg"></div>
-  </div>
-
-  <div id="formCard" class="card hidden">
-    <h2>주말 계획 입력</h2>
-
-    <div class="grid">
       <div class="field">
         <label for="commonChoice">공통 선택</label>
-        <select id="commonChoice" onchange="toggleFields()">
+        <select id="commonChoice" onchange="toggleFields()" required>
           <option value="__SELECT__">선택</option>
           <option value="">전체귀가</option>
           <option value="O">O (잔류)</option>
           <option value="♣">♣ (금요일 귀가)</option>
-          <option value="△">△ (토요일 귀가)</option>
-          <option value="통학">통학 (통학자)</option>
+          <option value="△" id="triangleOption">△ (토요일 귀가)</option>
+          <option value="통학">통학</option>
         </select>
+        <div class="small">
+          특별 주간에는 △ 선택 시 토요일 귀가와 일요일 귀가를 함께 선택할 수 있습니다.
+        </div>
       </div>
 
-      <div class="field hidden" id="fridayWrap">
+      <div id="fridayWrap" class="field hidden">
         <label for="fridayTime">금요일 귀가시간</label>
         <select id="fridayTime">
           <option value="">선택</option>
@@ -127,548 +218,479 @@
         </select>
       </div>
 
-      <div class="field hidden" id="saturdayWrap">
-        <label for="saturdayTime">토요일 귀가시간</label>
-        <select id="saturdayTime">
+      <div id="saturdayWrap" class="field hidden">
+        <label for="saturdayTime" id="triangleLeaveLabel">토요일 귀가시간</label>
+        <select id="saturdayTime" onchange="handleTriangleLeaveTimeChange()">
           <option value="">선택</option>
-          <option value="(토) 9:00 이전">(토) 9:00 이전</option>
-          <option value="(토) 12:50-2교시 후">(토) 12:50-2교시 후</option>
-          <option value="(토) 17:30-4교시 후">(토) 17:30-4교시 후</option>
-          <option value="(토) 21:00">(토) 21:00</option>
-          <option value="(토) 23:00">(토) 23:00</option>
         </select>
       </div>
 
-      <div class="field hidden" id="returnWrap">
+      <div id="returnWrap" class="field hidden">
         <label for="returnTime">복귀시간</label>
-        <select id="returnTime" onchange="handleReturnTimeChange()"></select>
-        <div id="specialReturnNote" class="note hidden">이번 주 한정: 복귀시간은 월요일 17:30~19:00, 월요일 21:00~21:30, 월요일 23:00~23:30, 화요일 오전 중 하나만 선택할 수 있습니다.</div>
+        <select id="returnTime" onchange="handleReturnTimeChange()">
+          <option value="">선택</option>
+        </select>
       </div>
-    </div>
 
-    <div class="field full hidden" id="mealWrap">
-      <label>외부인 식당 이용 신청</label>
-      <div class="checks" id="mealChecks">
-        <label><input type="checkbox" value="(토) 조식"> (토) 조식</label>
-        <label><input type="checkbox" value="(토) 중식"> (토) 중식</label>
-        <label><input type="checkbox" value="(토) 석식"> (토) 석식</label>
-        <label><input type="checkbox" value="(일) 조식"> (일) 조식</label>
-        <label><input type="checkbox" value="(일) 중식"> (일) 중식</label>
-        <label><input type="checkbox" value="(일) 석식"> (일) 석식</label>
-      </div>
-      <div class="note">잔류(O)는 토·일 외부인 식당 이용 신청 가능, 토요일 귀가(△)는 토요일 식당 이용만 신청 가능합니다.</div>
-    </div>
-
-    <div id="satOutingSection" class="hidden">
-      <h3>토요일 외출</h3>
-      <div class="grid">
-        <div class="field">
-          <label for="satOutingReason">토요일 외출 사유</label>
-          <input type="text" id="satOutingReason" placeholder="예: 학원">
+      <div id="mealWrap" class="field hidden">
+        <label>식사 신청</label>
+        <div id="mealChecks" class="checks">
+          <label><input type="checkbox" value="(토) 조식" /> (토) 조식</label>
+          <label><input type="checkbox" value="(토) 중식" /> (토) 중식</label>
+          <label><input type="checkbox" value="(토) 석식" /> (토) 석식</label>
+          <label><input type="checkbox" value="(일) 조식" /> (일) 조식</label>
+          <label><input type="checkbox" value="(일) 중식" /> (일) 중식</label>
+          <label><input type="checkbox" value="(일) 석식" /> (일) 석식</label>
         </div>
-        <div class="field">
-          <label for="satOutingDepartTime">토요일 출발 시간</label>
-          <input type="text" id="satOutingDepartTime" placeholder="예: 11:10">
-        </div>
-        <div class="field">
-          <label for="satOutingReturnTime">토요일 복귀 시간</label>
-          <input type="text" id="satOutingReturnTime" placeholder="예: 17:30">
+        <div class="small">
+          토요일 귀가자는 일요일 식사를 신청할 수 없습니다. 특별 주간의 일요일 귀가자는 일요일 식사 신청이 가능합니다.
         </div>
       </div>
-      <div class="note">조건에 맞는 경우에만 토요일 외출을 신청할 수 있습니다.</div>
-    </div>
 
-    <div id="sunOutingSection" class="hidden">
-      <h3>일요일 외출</h3>
-      <div class="grid">
-        <div class="field">
-          <label for="sunOutingReason">일요일 외출 사유</label>
-          <input type="text" id="sunOutingReason" placeholder="예: 병원">
+      <div id="satOutingWrap" class="field hidden">
+        <label>토요일 외출</label>
+        <div class="grid">
+          <div>
+            <label for="satOutingReason">토요일 외출 사유</label>
+            <input id="satOutingReason" type="text" placeholder="예: 병원, 학원, 가족식사 등" />
+          </div>
+
+          <div>
+            <label for="satOutingDepartTime">토요일 외출 출발</label>
+            <input id="satOutingDepartTime" type="text" placeholder="예: 13:00" />
+          </div>
         </div>
+
         <div class="field">
-          <label for="sunOutingDepartTime">일요일 출발 시간</label>
-          <input type="text" id="sunOutingDepartTime" placeholder="예: 13:00">
-        </div>
-        <div class="field">
-          <label for="sunOutingReturnTime">일요일 복귀 시간</label>
-          <input type="text" id="sunOutingReturnTime" placeholder="예: 16:30">
+          <label for="satOutingReturnTime">토요일 외출 복귀</label>
+          <input id="satOutingReturnTime" type="text" placeholder="예: 17:30" />
         </div>
       </div>
-      <div class="note">조건에 맞는 경우에만 일요일 외출을 신청할 수 있습니다.</div>
-    </div>
 
-    <div class="btns">
-      <button type="button" onclick="makePreview()">입력 내용 확인</button>
-    </div>
+      <div id="sunOutingWrap" class="field hidden">
+        <label>일요일 외출</label>
+        <div class="grid">
+          <div>
+            <label for="sunOutingReason">일요일 외출 사유</label>
+            <input id="sunOutingReason" type="text" placeholder="예: 병원, 학원, 가족식사 등" />
+          </div>
+
+          <div>
+            <label for="sunOutingDepartTime">일요일 외출 출발</label>
+            <input id="sunOutingDepartTime" type="text" placeholder="예: 13:00" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="sunOutingReturnTime">일요일 외출 복귀</label>
+          <input id="sunOutingReturnTime" type="text" placeholder="예: 17:30" />
+        </div>
+      </div>
+
+      <div class="buttons">
+        <button class="primary" type="submit">제출</button>
+        <button class="secondary" type="button" onclick="resetForm()">초기화</button>
+      </div>
+
+      <div id="message" class="msg"></div>
+    </form>
   </div>
 
-  <div id="previewCard" class="card hidden">
-    <h2>제출 전 확인</h2>
-    <div id="previewBox" class="preview"></div>
-    <div class="btns">
-      <button type="button" class="secondary" onclick="hidePreview()">수정하기</button>
-      <button type="button" onclick="submitForm()">최종 제출</button>
-    </div>
-    <div id="submitMsg" class="msg"></div>
-  </div>
-</div>
+  <script>
+    /*
+      반드시 기존 Apps Script 웹앱 URL로 교체하세요.
+      Apps Script를 새 배포가 아니라 기존 배포 업데이트로 처리하면 기존 URL을 그대로 사용하면 됩니다.
+    */
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxGFg-MwfLsmy2vrKFQSrZ9JL-E_Pyl1y79Al3BYNrPWwiFEna3JDORP1viPqWJuZi_9g/exec';
 
-<script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwecDF6r5eZjNAlgTTtITYowbck1tk4I1wV_wHQ5eFL15RrcipT6-HySzR0iUPvPGaYAA/exec';
+    /*
+      code.gs와 반드시 동일하게 맞추세요.
+      이 기간 안에서만 △가 토요일/일요일 귀가로 확장되고,
+      복귀시간도 특별 복귀시간으로 제한됩니다.
+    */
+    const SPECIAL_PLAN_ENABLED = true;
+    const SPECIAL_PLAN_ACTIVE_FROM = '2026-05-19';
+    const SPECIAL_PLAN_ACTIVE_UNTIL = '2026-05-22';
 
-  const RETURN_OPTIONS_FRIDAY = [
-    '(토) 17:30~19:00',
-    '(토) 21:00~21:30',
-    '(토) 23:00~23:30',
-    '(일) 17:30~19:00',
-    '(일) 21:00~21:30',
-    '(일) 23:00~23:30',
-    '월요일 아침'
-  ];
+    const TRIANGLE_LEAVE_OPTIONS_DEFAULT = [
+      '(토) 9:00 이전',
+      '(토) 12:50-2교시 후',
+      '(토) 17:30-4교시 후',
+      '(토) 21:00',
+      '(토) 23:00'
+    ];
 
-  const RETURN_OPTIONS_SATURDAY_OR_ALLHOME = [
-    '(일) 17:30~19:00',
-    '(일) 21:00~21:30',
-    '(일) 23:00~23:30',
-    '월요일 아침'
-  ];
+    const TRIANGLE_LEAVE_OPTIONS_SPECIAL = [
+      '(토) 9:00 이전',
+      '(토) 12:50-2교시 후',
+      '(토) 17:30-4교시 후',
+      '(일) 귀가'
+    ];
 
-  // 이번 주 한정 복귀시간 예외 설정
-  // 이 기간이 지나면 자동으로 기존 일/월 복귀 옵션으로 돌아갑니다.
-  const SPECIAL_RETURN_ENABLED = true;
-  const SPECIAL_RETURN_ACTIVE_FROM = '2026-05-19';
-  const SPECIAL_RETURN_ACTIVE_UNTIL = '2026-05-22';
-  const SPECIAL_RETURN_OPTIONS = [
-    '(월) 17:30~19:00',
-    '(월) 21:00~21:30',
-    '(월) 23:00~23:30',
-    '화요일 오전'
-  ];
+    const RETURN_OPTIONS_FRIDAY = [
+      '(토) 17:30~19:00',
+      '(토) 21:00~21:30',
+      '(토) 23:00~23:30',
+      '(일) 17:30~19:00',
+      '(일) 21:00~21:30',
+      '(일) 23:00~23:30',
+      '월요일 아침'
+    ];
 
-  let STUDENT_OK = false;
+    const RETURN_OPTIONS_SATURDAY_OR_ALLHOME = [
+      '(일) 17:30~19:00',
+      '(일) 21:00~21:30',
+      '(일) 23:00~23:30',
+      '월요일 아침'
+    ];
 
-  function getTodayKstYmd() {
-    const parts = new Intl.DateTimeFormat('ko-KR', {
-      timeZone: 'Asia/Seoul',
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }).formatToParts(new Date());
+    const SPECIAL_RETURN_OPTIONS = [
+     '(월) 17:30~19:00',
+     '(월) 21:00~21:30',
+     '(월) 23:00~23:30',
+     '화요일 아침'
+    ];
 
-    const y = parts.find(p => p.type === 'year').value;
-    const m = parts.find(p => p.type === 'month').value;
-    const d = parts.find(p => p.type === 'day').value;
-    return `${y}-${m}-${d}`;
-  }
-
-  function isSpecialReturnWeekClient() {
-    if (!SPECIAL_RETURN_ENABLED) return false;
-    const today = getTodayKstYmd();
-    return today >= SPECIAL_RETURN_ACTIVE_FROM && today <= SPECIAL_RETURN_ACTIVE_UNTIL;
-  }
-
-  function getAllowedReturnOptions(choice) {
-    if (isSpecialReturnWeekClient() && (choice === '' || choice === '♣' || choice === '△')) {
-      return SPECIAL_RETURN_OPTIONS;
+    function getTodayKstYmd() {
+      return new Intl.DateTimeFormat('sv-SE', {
+        timeZone: 'Asia/Seoul',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      }).format(new Date());
     }
 
-    if (choice === '') return RETURN_OPTIONS_SATURDAY_OR_ALLHOME;
-    if (choice === '♣') return RETURN_OPTIONS_FRIDAY;
-    if (choice === '△') return RETURN_OPTIONS_SATURDAY_OR_ALLHOME;
-    return [];
-  }
+    function isSpecialPlanClient() {
+      if (!SPECIAL_PLAN_ENABLED) return false;
 
-  function getCommonChoiceLabel(value) {
-    if (value === 'O') return 'O (잔류)';
-    if (value === '♣') return '♣ (금요일 귀가)';
-    if (value === '△') return '△ (토요일 귀가)';
-    if (value === '통학') return '통학 (통학자)';
-    if (value === '') return '전체귀가';
-    return '선택 안 함';
-  }
-
-  function isSaturdayReturn(value) {
-    return (value || '').startsWith('(토)');
-  }
-
-  function isSundayReturn(value) {
-    return (value || '').startsWith('(일)');
-  }
-
-  function isMondayMorningReturn(value) {
-    return value === '월요일 아침';
-  }
-
-  function checkStudent() {
-    clearMsg('studentMsg');
-
-    const params = new URLSearchParams({
-      action: 'findStudent',
-      className: val('className'),
-      studentId: val('studentId'),
-      studentName: val('studentName')
-    });
-
-    fetch(`${SCRIPT_URL}?${params.toString()}`)
-      .then(r => r.json())
-      .then(res => {
-        if (res.found) {
-          STUDENT_OK = true;
-          setMsg('studentMsg', `${res.className} ${res.studentId} ${res.studentName} 학생이 확인되었습니다.`, true);
-          document.getElementById('formCard').classList.remove('hidden');
-        } else {
-          STUDENT_OK = false;
-          document.getElementById('formCard').classList.add('hidden');
-          document.getElementById('previewCard').classList.add('hidden');
-          setMsg('studentMsg', '반, 학번, 이름이 일치하는 학생을 찾지 못했습니다.', false);
-        }
-      })
-      .catch(err => {
-        STUDENT_OK = false;
-        setMsg('studentMsg', err.message || String(err), false);
-      });
-  }
-
-  function setReturnOptions(choice) {
-    const select = document.getElementById('returnTime');
-    const currentValue = select.value;
-
-    const options = getAllowedReturnOptions(choice);
-    const specialActive = isSpecialReturnWeekClient() && (choice === '' || choice === '♣' || choice === '△');
-
-    select.innerHTML = '';
-
-    const first = document.createElement('option');
-    first.value = '';
-    first.textContent = '선택';
-    select.appendChild(first);
-
-    options.forEach(value => {
-      const opt = document.createElement('option');
-      opt.value = value;
-      opt.textContent = value;
-      select.appendChild(opt);
-    });
-
-    if (options.includes(currentValue)) {
-      select.value = currentValue;
-    } else {
-      select.value = '';
+      const today = getTodayKstYmd();
+      return today >= SPECIAL_PLAN_ACTIVE_FROM && today <= SPECIAL_PLAN_ACTIVE_UNTIL;
     }
 
-    const note = document.getElementById('specialReturnNote');
-    if (note) note.classList.toggle('hidden', !specialActive);
-  }
+    function val(id) {
+      return document.getElementById(id).value;
+    }
 
-  function updateMealAvailability(choice) {
-    const checkboxes = document.querySelectorAll('#mealChecks input[type="checkbox"]');
+    function setVal(id, value) {
+      document.getElementById(id).value = value;
+    }
 
-    checkboxes.forEach(el => {
-      const isSundayMeal = el.value.startsWith('(일)');
+    function toggle(id, show) {
+      document.getElementById(id).classList.toggle('hidden', !show);
+    }
 
-      if (choice === '△' && isSundayMeal) {
-        el.checked = false;
-        el.disabled = true;
-        el.parentElement.style.opacity = '0.5';
-      } else if (choice === 'O' || choice === '△') {
-        el.disabled = false;
-        el.parentElement.style.opacity = '1';
+    function msg(text, ok) {
+      const el = document.getElementById('message');
+      el.textContent = text;
+      el.className = 'msg ' + (ok ? 'ok' : 'err');
+    }
+
+    function getAllowedTriangleLeaveOptions() {
+      return isSpecialPlanClient()
+        ? TRIANGLE_LEAVE_OPTIONS_SPECIAL
+        : TRIANGLE_LEAVE_OPTIONS_DEFAULT;
+    }
+
+    function getAllowedReturnOptions(choice) {
+      if (isSpecialPlanClient() && (choice === '' || choice === '♣' || choice === '△')) {
+        return SPECIAL_RETURN_OPTIONS;
+      }
+
+      if (choice === '') return RETURN_OPTIONS_SATURDAY_OR_ALLHOME;
+      if (choice === '♣') return RETURN_OPTIONS_FRIDAY;
+      if (choice === '△') return RETURN_OPTIONS_SATURDAY_OR_ALLHOME;
+
+      return [];
+    }
+
+    function setSpecialNotice() {
+      const box = document.getElementById('specialNotice');
+
+      if (isSpecialPlanClient()) {
+        box.style.display = 'block';
+        box.textContent =
+          '특별 주간 신청 기간입니다. △ 선택 시 토요일/일요일 귀가를 선택할 수 있으며, 복귀시간은 화요일 15:00~19:00, 화요일 21:00~21:30, 화요일 23:00~23:30, 수요일 오전 중 하나만 선택할 수 있습니다.';
       } else {
-        el.checked = false;
-        el.disabled = true;
-        el.parentElement.style.opacity = '0.5';
-      }
-    });
-  }
-
-  function updateOutingAvailability(choice, returnTime) {
-    let allowSatOuting = false;
-    let allowSunOuting = false;
-
-    if (choice === 'O') {
-      allowSatOuting = true;
-      allowSunOuting = true;
-    } else if (choice === '♣') {
-      if (isSaturdayReturn(returnTime)) {
-        allowSatOuting = true;
-        allowSunOuting = true;
-      } else if (isSundayReturn(returnTime)) {
-        allowSatOuting = false;
-        allowSunOuting = true;
-      } else if (isMondayMorningReturn(returnTime)) {
-        allowSatOuting = false;
-        allowSunOuting = false;
-      }
-    } else if (choice === '△') {
-      if (isSundayReturn(returnTime)) {
-        allowSatOuting = false;
-        allowSunOuting = true;
-      } else if (isMondayMorningReturn(returnTime)) {
-        allowSatOuting = false;
-        allowSunOuting = false;
+        box.style.display = 'none';
+        box.textContent = '';
       }
     }
 
-    toggle('satOutingSection', allowSatOuting);
-    toggle('sunOutingSection', allowSunOuting);
+    function setTriangleLeaveOptions() {
+      const select = document.getElementById('saturdayTime');
+      const currentValue = select.value;
+      const options = getAllowedTriangleLeaveOptions();
 
-    if (!allowSatOuting) {
-      document.getElementById('satOutingReason').value = '';
-      document.getElementById('satOutingDepartTime').value = '';
-      document.getElementById('satOutingReturnTime').value = '';
-    }
+      select.innerHTML = '';
 
-    if (!allowSunOuting) {
-      document.getElementById('sunOutingReason').value = '';
-      document.getElementById('sunOutingDepartTime').value = '';
-      document.getElementById('sunOutingReturnTime').value = '';
-    }
-  }
+      const first = document.createElement('option');
+      first.value = '';
+      first.textContent = '선택';
+      select.appendChild(first);
 
-  function handleReturnTimeChange() {
-    updateOutingAvailability(val('commonChoice'), val('returnTime'));
-  }
-
-  function toggleFields() {
-    const choice = val('commonChoice');
-
-    toggle('fridayWrap', choice === '♣');
-    toggle('saturdayWrap', choice === '△');
-    toggle('returnWrap', choice === '' || choice === '♣' || choice === '△');
-    toggle('mealWrap', choice === 'O' || choice === '△');
-
-    if (choice !== '♣') {
-      document.getElementById('fridayTime').value = '';
-    }
-
-    if (choice !== '△') {
-      document.getElementById('saturdayTime').value = '';
-    }
-
-    setReturnOptions(choice);
-
-    if (choice !== 'O' && choice !== '△') {
-      clearMealChecks();
-    }
-
-    updateMealAvailability(choice);
-    updateOutingAvailability(choice, val('returnTime'));
-  }
-
-  function validateBeforePreview(data) {
-    if (!STUDENT_OK) return '먼저 학생 정보를 확인하세요.';
-    if (!data.className) return '반을 선택하세요.';
-    if (!data.studentId) return '학번을 입력하세요.';
-    if (!data.studentName) return '이름을 입력하세요.';
-    if (data.commonChoice === '__SELECT__') return '공통 선택을 선택하세요.';
-
-    if (data.commonChoice === '♣' && !data.fridayTime) {
-      return '금요일 귀가자는 금요일 귀가시간을 선택해야 합니다.';
-    }
-
-    if (data.commonChoice === '△' && !data.saturdayTime) {
-      return '토요일 귀가자는 토요일 귀가시간을 선택해야 합니다.';
-    }
-
-    if ((data.commonChoice === '' || data.commonChoice === '♣' || data.commonChoice === '△') && !data.returnTime) {
-      return '전체귀가/금요일 귀가/토요일 귀가 학생은 복귀시간을 반드시 입력해야 합니다.';
-    }
-
-    const allowedReturnOptions = getAllowedReturnOptions(data.commonChoice);
-
-    if ((data.commonChoice === '' || data.commonChoice === '♣' || data.commonChoice === '△') &&
-        !allowedReturnOptions.includes(data.returnTime)) {
-      if (isSpecialReturnWeekClient()) {
-        return '이번 주 복귀시간은 화요일 15:00~19:00, 화요일 21:00~21:30, 화요일 23:00~23:30, 수요일 오전 중 하나만 선택할 수 있습니다.';
-      }
-
-      if (data.commonChoice === '♣') {
-        return '금요일 귀가 학생은 토요일/일요일 복귀시간 또는 월요일 아침만 선택할 수 있습니다.';
-      }
-
-      return '전체귀가/토요일 귀가 학생은 일요일 복귀시간 또는 월요일 아침만 선택할 수 있습니다.';
-    }
-
-    const hasSatOuting = [
-      data.satOutingReason,
-      data.satOutingDepartTime,
-      data.satOutingReturnTime
-    ].some(v => (v || '').trim());
-
-    const hasSunOuting = [
-      data.sunOutingReason,
-      data.sunOutingDepartTime,
-      data.sunOutingReturnTime
-    ].some(v => (v || '').trim());
-
-    const allowSatOuting =
-      data.commonChoice === 'O' ||
-      (data.commonChoice === '♣' && isSaturdayReturn(data.returnTime));
-
-    const allowSunOuting =
-      data.commonChoice === 'O' ||
-      (data.commonChoice === '♣' && (isSaturdayReturn(data.returnTime) || isSundayReturn(data.returnTime))) ||
-      (data.commonChoice === '△' && isSundayReturn(data.returnTime));
-
-    if (hasSatOuting && !allowSatOuting) {
-      return '현재 선택한 공통선택/복귀시간 조합에서는 토요일 외출을 신청할 수 없습니다.';
-    }
-
-    if (hasSunOuting && !allowSunOuting) {
-      return '현재 선택한 공통선택/복귀시간 조합에서는 일요일 외출을 신청할 수 없습니다.';
-    }
-
-    const sundayMeals = ['(일) 조식', '(일) 중식', '(일) 석식'];
-    if (data.commonChoice === '△') {
-      const hasSundayMeal = data.meals.some(meal => sundayMeals.includes(meal));
-      if (hasSundayMeal) {
-        return '토요일 귀가자는 일요일 외부인 식당 이용을 신청할 수 없습니다.';
-      }
-    }
-
-    return '';
-  }
-
-  function makePreview() {
-    const data = collectForm();
-    const error = validateBeforePreview(data);
-
-    if (error) {
-      setMsg('studentMsg', error, false);
-      document.getElementById('previewCard').classList.add('hidden');
-      return;
-    }
-
-    clearMsg('studentMsg');
-
-    const meals = data.meals.length ? data.meals.join(', ') : '없음';
-    const satOuting = [data.satOutingReason, [data.satOutingDepartTime, data.satOutingReturnTime].filter(Boolean).join('~')]
-      .filter(Boolean).join(' / ') || '없음';
-    const sunOuting = [data.sunOutingReason, [data.sunOutingDepartTime, data.sunOutingReturnTime].filter(Boolean).join('~')]
-      .filter(Boolean).join(' / ') || '없음';
-
-    const text = [
-      `반: ${data.className}`,
-      `학번: ${data.studentId}`,
-      `이름: ${data.studentName}`,
-      `공통선택: ${getCommonChoiceLabel(data.commonChoice)}`,
-      `금요일 귀가시간: ${data.fridayTime || '없음'}`,
-      `토요일 귀가시간: ${data.saturdayTime || '없음'}`,
-      `복귀시간: ${data.returnTime || '없음'}`,
-      `외부인 식당 이용 신청: ${meals}`,
-      `토요일 외출: ${satOuting}`,
-      `일요일 외출: ${sunOuting}`
-    ].join('\n');
-
-    document.getElementById('previewBox').textContent = text;
-    document.getElementById('previewCard').classList.remove('hidden');
-    clearMsg('submitMsg');
-  }
-
-  function hidePreview() {
-    document.getElementById('previewCard').classList.add('hidden');
-  }
-
-  function submitForm() {
-    const data = collectForm();
-    const error = validateBeforePreview(data);
-
-    if (error) {
-      setMsg('submitMsg', error, false);
-      return;
-    }
-
-    const body = new URLSearchParams({
-      className: data.className,
-      studentId: data.studentId,
-      studentName: data.studentName,
-      commonChoice: data.commonChoice,
-      fridayTime: data.fridayTime,
-      saturdayTime: data.saturdayTime,
-      returnTime: data.returnTime,
-      meals: data.meals.join('|'),
-      satOutingReason: data.satOutingReason,
-      satOutingDepartTime: data.satOutingDepartTime,
-      satOutingReturnTime: data.satOutingReturnTime,
-      sunOutingReason: data.sunOutingReason,
-      sunOutingDepartTime: data.sunOutingDepartTime,
-      sunOutingReturnTime: data.sunOutingReturnTime
-    });
-
-    setMsg('submitMsg', '저장 중입니다...', true);
-
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-      body: body.toString()
-    })
-      .then(r => r.json())
-      .then(res => {
-        if (res.ok) {
-          setMsg('submitMsg', res.message || '저장되었습니다.', true);
-          document.getElementById('previewCard').classList.add('hidden');
-        } else {
-          setMsg('submitMsg', res.error || '저장 중 오류가 발생했습니다.', false);
-        }
-      })
-      .catch(err => {
-        setMsg('submitMsg', err.message || String(err), false);
+      options.forEach(value => {
+        const opt = document.createElement('option');
+        opt.value = value;
+        opt.textContent = value;
+        select.appendChild(opt);
       });
-  }
 
-  function collectForm() {
-    const meals = Array.from(document.querySelectorAll('#mealChecks input[type="checkbox"]:checked'))
-      .map(el => el.value);
+      if (options.includes(currentValue)) {
+        select.value = currentValue;
+      } else {
+        select.value = '';
+      }
 
-    return {
-      className: val('className'),
-      studentId: val('studentId'),
-      studentName: val('studentName'),
-      commonChoice: val('commonChoice'),
-      fridayTime: val('fridayTime'),
-      saturdayTime: val('saturdayTime'),
-      returnTime: val('returnTime'),
-      meals,
-      satOutingReason: val('satOutingReason'),
-      satOutingDepartTime: val('satOutingDepartTime'),
-      satOutingReturnTime: val('satOutingReturnTime'),
-      sunOutingReason: val('sunOutingReason'),
-      sunOutingDepartTime: val('sunOutingDepartTime'),
-      sunOutingReturnTime: val('sunOutingReturnTime')
-    };
-  }
+      const label = document.getElementById('triangleLeaveLabel');
+      if (label) {
+        label.textContent = isSpecialPlanClient()
+          ? '토요일/일요일 귀가시간'
+          : '토요일 귀가시간';
+      }
 
-  function clearMealChecks() {
-    document.querySelectorAll('#mealChecks input[type="checkbox"]').forEach(el => {
-      el.checked = false;
-    });
-  }
+      const option = document.getElementById('triangleOption');
+      if (option) {
+        option.textContent = isSpecialPlanClient()
+          ? '△ (토요일/일요일 귀가)'
+          : '△ (토요일 귀가)';
+      }
+    }
 
-  function val(id) {
-    return document.getElementById(id).value.trim();
-  }
+    function setReturnOptions(choice) {
+      const select = document.getElementById('returnTime');
+      const currentValue = select.value;
+      const options = getAllowedReturnOptions(choice);
 
-  function toggle(id, show) {
-    document.getElementById(id).classList.toggle('hidden', !show);
-  }
+      select.innerHTML = '';
 
-  function setMsg(id, text, ok) {
-    const el = document.getElementById(id);
-    el.textContent = text;
-    el.className = `msg ${ok ? 'ok' : 'err'}`;
-  }
+      const first = document.createElement('option');
+      first.value = '';
+      first.textContent = '선택';
+      select.appendChild(first);
 
-  function clearMsg(id) {
-    const el = document.getElementById(id);
-    el.textContent = '';
-    el.className = 'msg';
-  }
+      options.forEach(value => {
+        const opt = document.createElement('option');
+        opt.value = value;
+        opt.textContent = value;
+        select.appendChild(opt);
+      });
 
-  window.addEventListener('load', () => {
-    updateMealAvailability(val('commonChoice'));
-    setReturnOptions(val('commonChoice'));
-    updateOutingAvailability(val('commonChoice'), val('returnTime'));
-  });
-</script>
+      if (options.includes(currentValue)) {
+        select.value = currentValue;
+      } else {
+        select.value = '';
+      }
+    }
+
+    function isTriangleSaturdayLeave(value) {
+      return (value || '').startsWith('(토)');
+    }
+
+    function isTriangleSundayLeave(value) {
+      return (value || '').startsWith('(일)');
+    }
+
+    function clearMealChecks() {
+      document.querySelectorAll('#mealChecks input[type="checkbox"]').forEach(el => {
+        el.checked = false;
+      });
+    }
+
+    function selectedMeals() {
+      return Array.from(document.querySelectorAll('#mealChecks input[type="checkbox"]:checked'))
+        .map(el => el.value);
+    }
+
+    function updateMealAvailability(choice) {
+      const checkboxes = document.querySelectorAll('#mealChecks input[type="checkbox"]');
+      const triangleLeaveTime = val('saturdayTime');
+
+      checkboxes.forEach(el => {
+        const isSundayMeal = el.value.startsWith('(일)');
+        let enabled = false;
+
+        if (choice === 'O') {
+          enabled = true;
+        } else if (choice === '△') {
+          if (isTriangleSaturdayLeave(triangleLeaveTime) && isSundayMeal) {
+            enabled = false;
+          } else {
+            enabled = true;
+          }
+        }
+
+        el.disabled = !enabled;
+        el.parentElement.style.opacity = enabled ? '1' : '0.5';
+
+        if (!enabled) {
+          el.checked = false;
+        }
+      });
+    }
+
+    function updateOutingAvailability(choice, returnTime) {
+      const triangleLeaveTime = val('saturdayTime');
+
+      const triangleSaturday = choice === '△' && isTriangleSaturdayLeave(triangleLeaveTime);
+      const triangleSunday = choice === '△' && isTriangleSundayLeave(triangleLeaveTime);
+
+      const allowSat =
+        choice === 'O' ||
+        triangleSaturday ||
+        triangleSunday ||
+        (choice === '♣' && returnTime.startsWith('(토)'));
+
+      const allowSun =
+        choice === 'O' ||
+        triangleSunday ||
+        (choice === '♣' && (returnTime.startsWith('(토)') || returnTime.startsWith('(일)'))) ||
+        (choice === '△' && returnTime.startsWith('(일)'));
+
+      toggle('satOutingWrap', allowSat);
+      toggle('sunOutingWrap', allowSun);
+
+      if (!allowSat) {
+        setVal('satOutingReason', '');
+        setVal('satOutingDepartTime', '');
+        setVal('satOutingReturnTime', '');
+      }
+
+      if (!allowSun) {
+        setVal('sunOutingReason', '');
+        setVal('sunOutingDepartTime', '');
+        setVal('sunOutingReturnTime', '');
+      }
+    }
+
+    function toggleFields() {
+      const choice = val('commonChoice');
+
+      toggle('fridayWrap', choice === '♣');
+      toggle('saturdayWrap', choice === '△');
+      toggle('returnWrap', choice === '' || choice === '♣' || choice === '△');
+      toggle('mealWrap', choice === 'O' || choice === '△');
+
+      if (choice !== '♣') {
+        setVal('fridayTime', '');
+      }
+
+      if (choice === '△') {
+        setTriangleLeaveOptions();
+      } else {
+        setVal('saturdayTime', '');
+      }
+
+      setReturnOptions(choice);
+
+      if (choice !== 'O' && choice !== '△') {
+        clearMealChecks();
+      }
+
+      updateMealAvailability(choice);
+      updateOutingAvailability(choice, val('returnTime'));
+    }
+
+    function handleTriangleLeaveTimeChange() {
+      updateMealAvailability(val('commonChoice'));
+      updateOutingAvailability(val('commonChoice'), val('returnTime'));
+    }
+
+    function handleReturnTimeChange() {
+      updateOutingAvailability(val('commonChoice'), val('returnTime'));
+    }
+
+    function validateBeforeSubmit() {
+      const choice = val('commonChoice');
+
+      if (!val('className')) throw new Error('반을 선택하세요.');
+      if (!val('studentId').trim()) throw new Error('학번을 입력하세요.');
+      if (!val('studentName').trim()) throw new Error('이름을 입력하세요.');
+      if (choice === '__SELECT__') throw new Error('공통 선택을 선택하세요.');
+
+      if (choice === '♣' && !val('fridayTime')) {
+        throw new Error('금요일 귀가시간을 선택하세요.');
+      }
+
+      if (choice === '△' && !val('saturdayTime')) {
+        throw new Error(isSpecialPlanClient()
+          ? '토요일/일요일 귀가시간을 선택하세요.'
+          : '토요일 귀가시간을 선택하세요.');
+      }
+
+      if ((choice === '' || choice === '♣' || choice === '△') && !val('returnTime')) {
+        throw new Error('복귀시간을 선택하세요.');
+      }
+
+      if (choice === '△') {
+        const options = getAllowedTriangleLeaveOptions();
+        if (!options.includes(val('saturdayTime'))) {
+          throw new Error('허용되지 않은 귀가시간입니다. 다시 선택하세요.');
+        }
+      }
+
+      if (choice === '' || choice === '♣' || choice === '△') {
+        const options = getAllowedReturnOptions(choice);
+        if (!options.includes(val('returnTime'))) {
+          throw new Error('허용되지 않은 복귀시간입니다. 다시 선택하세요.');
+        }
+      }
+    }
+
+    async function submitForm(event) {
+      event.preventDefault();
+
+      try {
+        validateBeforeSubmit();
+
+        const data = new URLSearchParams();
+
+        data.append('className', val('className'));
+        data.append('studentId', val('studentId').trim());
+        data.append('studentName', val('studentName').trim());
+        data.append('commonChoice', val('commonChoice'));
+        data.append('fridayTime', val('fridayTime'));
+        data.append('saturdayTime', val('saturdayTime'));
+        data.append('returnTime', val('returnTime'));
+        data.append('meals', selectedMeals().join('|'));
+
+        data.append('satOutingReason', val('satOutingReason'));
+        data.append('satOutingDepartTime', val('satOutingDepartTime'));
+        data.append('satOutingReturnTime', val('satOutingReturnTime'));
+
+        data.append('sunOutingReason', val('sunOutingReason'));
+        data.append('sunOutingDepartTime', val('sunOutingDepartTime'));
+        data.append('sunOutingReturnTime', val('sunOutingReturnTime'));
+
+        msg('제출 중입니다...', true);
+
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: data
+        });
+
+        const json = await res.json();
+
+        if (!json.ok) {
+          throw new Error(json.error || '제출에 실패했습니다.');
+        }
+
+        msg(json.message || '제출되었습니다.', true);
+      } catch (err) {
+        msg('오류: ' + (err.message || err), false);
+      }
+    }
+
+    function resetForm() {
+      document.getElementById('form').reset();
+      msg('', true);
+      toggleFields();
+    }
+
+    document.getElementById('form').addEventListener('submit', submitForm);
+
+    setSpecialNotice();
+    setTriangleLeaveOptions();
+    toggleFields();
+  </script>
 </body>
 </html>
