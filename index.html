@@ -199,7 +199,7 @@
           <option value="">전체귀가</option>
           <option value="O">O (잔류)</option>
           <option value="♣">♣ (금요일 귀가)</option>
-          <option value="△" id="triangleOption">△ (토/요일 귀가)</option>
+          <option value="△" id="triangleOption">△ (토요일 귀가)</option>
           <option value="통학">통학</option>
         </select>
         <div class="small">
@@ -301,7 +301,7 @@
       반드시 기존 Apps Script 웹앱 URL로 교체하세요.
       Apps Script를 새 배포가 아니라 기존 배포 업데이트로 처리하면 기존 URL을 그대로 사용하면 됩니다.
     */
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxGFg-MwfLsmy2vrKFQSrZ9JL-E_Pyl1y79Al3BYNrPWwiFEna3JDORP1viPqWJuZi_9g/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby_kKxRHI-HuR7M_4hxDCxYCkyR7WDXk8gr30fSt1EsKD76nCf86Lwk4G6OjKveTGmFMg/exec';
 
     /*
       code.gs와 반드시 동일하게 맞추세요.
@@ -324,7 +324,13 @@
       '(토) 9:00 이전',
       '(토) 12:50-2교시 후',
       '(토) 17:30-4교시 후',
-      '(일) 귀가'
+      '(토) 21:00',
+      '(토) 23:00',
+      '(일) 9:00 이전',
+      '(일) 12:50-2교시 후',
+      '(일) 17:30-4교시 후',
+      '(일) 21:00',
+      '(일) 23:00'
     ];
 
     const RETURN_OPTIONS_FRIDAY = [
@@ -345,10 +351,10 @@
     ];
 
     const SPECIAL_RETURN_OPTIONS = [
-     '(월) 17:30~19:00',
-     '(월) 21:00~21:30',
-     '(월) 23:00~23:30',
-     '화요일 아침'
+      '(화) 15:00~19:00',
+      '(화) 21:00~21:30',
+      '(화) 23:00~23:30',
+      '수요일 오전'
     ];
 
     function getTodayKstYmd() {
@@ -365,6 +371,18 @@
 
       const today = getTodayKstYmd();
       return today >= SPECIAL_PLAN_ACTIVE_FROM && today <= SPECIAL_PLAN_ACTIVE_UNTIL;
+    }
+
+    function normalizeOptionText(value) {
+      return String(value || '')
+        .replace(/[\u200B-\u200D\uFEFF]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function optionIncludes(options, value) {
+      const target = normalizeOptionText(value);
+      return options.some(opt => normalizeOptionText(opt) === target);
     }
 
     function val(id) {
@@ -435,8 +453,8 @@
         select.appendChild(opt);
       });
 
-      if (options.includes(currentValue)) {
-        select.value = currentValue;
+      if (optionIncludes(options, currentValue)) {
+        select.value = options.find(opt => normalizeOptionText(opt) === normalizeOptionText(currentValue));
       } else {
         select.value = '';
       }
@@ -475,19 +493,19 @@
         select.appendChild(opt);
       });
 
-      if (options.includes(currentValue)) {
-        select.value = currentValue;
+      if (optionIncludes(options, currentValue)) {
+        select.value = options.find(opt => normalizeOptionText(opt) === normalizeOptionText(currentValue));
       } else {
         select.value = '';
       }
     }
 
     function isTriangleSaturdayLeave(value) {
-      return (value || '').startsWith('(토)');
+      return normalizeOptionText(value).startsWith('(토)');
     }
 
     function isTriangleSundayLeave(value) {
-      return (value || '').startsWith('(일)');
+      return normalizeOptionText(value).startsWith('(일)');
     }
 
     function clearMealChecks() {
@@ -506,7 +524,7 @@
       const triangleLeaveTime = val('saturdayTime');
 
       checkboxes.forEach(el => {
-        const isSundayMeal = el.value.startsWith('(일)');
+        const isSundayMeal = normalizeOptionText(el.value).startsWith('(일)');
         let enabled = false;
 
         if (choice === 'O') {
@@ -530,6 +548,7 @@
 
     function updateOutingAvailability(choice, returnTime) {
       const triangleLeaveTime = val('saturdayTime');
+      const r = normalizeOptionText(returnTime);
 
       const triangleSaturday = choice === '△' && isTriangleSaturdayLeave(triangleLeaveTime);
       const triangleSunday = choice === '△' && isTriangleSundayLeave(triangleLeaveTime);
@@ -538,13 +557,13 @@
         choice === 'O' ||
         triangleSaturday ||
         triangleSunday ||
-        (choice === '♣' && returnTime.startsWith('(토)'));
+        (choice === '♣' && r.startsWith('(토)'));
 
       const allowSun =
         choice === 'O' ||
         triangleSunday ||
-        (choice === '♣' && (returnTime.startsWith('(토)') || returnTime.startsWith('(일)'))) ||
-        (choice === '△' && returnTime.startsWith('(일)'));
+        (choice === '♣' && (r.startsWith('(토)') || r.startsWith('(일)'))) ||
+        (choice === '△' && r.startsWith('(일)'));
 
       toggle('satOutingWrap', allowSat);
       toggle('sunOutingWrap', allowSun);
@@ -623,14 +642,14 @@
 
       if (choice === '△') {
         const options = getAllowedTriangleLeaveOptions();
-        if (!options.includes(val('saturdayTime'))) {
+        if (!optionIncludes(options, val('saturdayTime'))) {
           throw new Error('허용되지 않은 귀가시간입니다. 다시 선택하세요.');
         }
       }
 
       if (choice === '' || choice === '♣' || choice === '△') {
         const options = getAllowedReturnOptions(choice);
-        if (!options.includes(val('returnTime'))) {
+        if (!optionIncludes(options, val('returnTime'))) {
           throw new Error('허용되지 않은 복귀시간입니다. 다시 선택하세요.');
         }
       }
